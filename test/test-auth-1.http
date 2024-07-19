@@ -1,0 +1,13 @@
+### 사용자 정보 가져옴.
+GET http://localhost:8000/users/ HTTP/1.1
+
+### JWT발급
+GET http://localhost:8000/token HTTP/1.1
+
+### 사용자 등록
+POST http://localhost:8000/users/ HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+  "name": "홍길동", "price": 100
+}

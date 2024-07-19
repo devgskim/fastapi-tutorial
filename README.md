@@ -1,2 +1,24 @@
 # fastapi-tutorial
 fastapi tutorial
+* install
+```bash
+$ pip install fastapi uvicorn
+
+```
+
+* run server
+```bash
+$ uvicorn main:app --reload
+
+```
+
+### JWT
+
+```bash
+$ pip install fastapi[all] python-jose[cryptography] passlib[bcrypt]
+$ pip install python-jose[cryptography] passlib[bcrypt]
+$ pip install sqlalchemy
+$ pip install sqlite
+$ pip install python-jose[cryptography]
+$ pip install -U pytest
+```
