@@ -38,15 +38,23 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 
-from models import User, Base
+from models import User
 from schemas import UserCreate, Token
-from database import engine, get_db
+from database import engine, get_db, Base
 from auth.jwt import create_access_token
 from auth.oauth2 import get_current_user
+
+from routers.posts import router as posts_router
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI()
+app.include_router(posts_router, prefix="/posts", tags=["posts"])
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Blog API"}
 
 # 데이터베이스 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -78,6 +86,6 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/users/me/", response_model=schemas.User)
-def read_users_me(current_user: User = Depends(get_current_user)):
-    return current_user
+# @app.get("/users/me/", response_model=schemas.User)
+# def read_users_me(current_user: User = Depends(get_current_user)):
+#     return current_user
