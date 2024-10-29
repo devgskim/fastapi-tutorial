@@ -1,13 +1,18 @@
-from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy import Column, Integer, String
+from database import Base
 
-class Post(BaseModel):
-    id: int
-    title: str
-    content: str
-    author: str
+class Post(Base):
+    __tablename__ = "posts"
 
-class User(BaseModel):
-    username: str
-    password: str
-    email: str
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    content = Column(String)
+    author = Column(String)
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)

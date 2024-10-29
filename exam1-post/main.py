@@ -1,91 +1,53 @@
-# from fastapi import FastAPI
-
-# app = FastAPI()
-
-# @app.get("/")
-# def read_root():
-#     return {"message": "Hello World"}
-
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: str = None):
-#     return {"item_id": item_id, "q": q}
-
-# @app.post("/items/")
-# def create_item(item: dict):
-#     return {"item_name": item.get("name"), "item_price": item.get("price")}
-
-####################################################
-# from fastapi import FastAPI
-# from routers import items
-
-# app = FastAPI()
-
-# app.include_router(items.router)
-
-# @app.get("/")
-# def read_root():
-#     return {"message": "Hello World"}
-
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
-
-
-
-
 from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
-from passlib.context import CryptContext
+from starlette.middleware.cors import CORSMiddleware
 
-from models import User
-from schemas import UserCreate, Token
+from sqlalchemy.orm import Session
+from passlib.context import CryptContext
+import logging
+
+# from schemas import UserCreate, Token
+# from auth.jwt import create_access_token
+# from auth.oauth2 import get_current_user
 from database import engine, get_db, Base
-from auth.jwt import create_access_token
-from auth.oauth2 import get_current_user
 
 from routers.posts import router as posts_router
+from routers.users import router as users_router
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)  # 로그 레벨 설정 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 
 app = FastAPI()
 app.include_router(posts_router, prefix="/posts", tags=["posts"])
+app.include_router(users_router, prefix="/users", tags=["users"])  # 사용자 라우터 등록
+# origins = [
+#     "http://127.0.0.1:8000",
+# ]
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.get("/")
 def read_root():
+    print("call main")
     return {"message": "Welcome to the Blog API"}
 
-# 데이터베이스 테이블 생성
-Base.metadata.create_all(bind=engine)
 
-@app.post("/users/", response_model=User)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    hashed_password = pwd_context.hash(user.password)
-    db_user = User(username=user.username, hashed_password=hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+import argparse
+if __name__ == '__main__':
+    # Argument parser 설정
+    parser = argparse.ArgumentParser(description='post application')
+    parser.add_argument('--dbcreate', action='store_true', help='Create the database tables')
 
-@app.post("/token", response_model=Token)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == form_data.username).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    if not pwd_context.verify(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
-
-# @app.get("/users/me/", response_model=schemas.User)
-# def read_users_me(current_user: User = Depends(get_current_user)):
-#     return current_user
+    args = parser.parse_args()
+    if args.dbcreate:
+        import database
+        database.init_db()
+        logging.info("create database")
+    else:
+        pass

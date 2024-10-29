@@ -1,0 +1,31 @@
+### 
+curl -X 'POST' \
+  'http://192.168.145.211:8000/items/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "마우스",
+  "description": "초경량 게이밍 마우스",
+  "price": 139000
+}'
+
+###
+curl -X 'GET' \
+  'http://192.168.145.211:8000/items/' \
+  -H 'accept: application/json'
+
+###
+curl -X 'PUT' \
+  'http://192.168.145.211:8000/items/1' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "키보드",
+  "description": "초 고성능 키보드",
+  "price": 200000
+}'
+
+###
+curl -X 'DELETE' \
+  'http://192.168.145.211:8000/items/1' \
+  -H 'accept: application/json'

@@ -1,0 +1,21 @@
+### 기본
+GET http://localhost:8000/ HTTP/1.1
+
+### 전체 목록
+GET http://localhost:8000/users/ HTTP/1.1
+
+### 특정 아이디 조회
+GET http://localhost:8000/users/1 HTTP/1.1
+
+### delete
+DELETE http://localhost:8000/users/2 HTTP/1.1
+
+### 등록
+POST http://localhost:8000/users/ HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "username": "testuser1",
+    "email": "testuser1@example.com",
+    "password": "securepassword"
+}
