@@ -18,7 +18,11 @@ from routers.users import router as users_router
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)  # 로그 레벨 설정 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 
-app = FastAPI()
+app = FastAPI(
+    title="fastapi tutorial",
+    summary="fastapi tutorial post, user",
+    version="0.0.1"
+)
 app.include_router(posts_router, prefix="/posts", tags=["posts"])
 app.include_router(users_router, prefix="/users", tags=["users"])  # 사용자 라우터 등록
 # origins = [
@@ -50,4 +54,6 @@ if __name__ == '__main__':
         database.init_db()
         logging.info("create database")
     else:
+        import uvicorn
+        uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)
         pass

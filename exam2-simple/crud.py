@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models import Item
-from app.schema import ItemCreate
+from models import Item
+from schema import ItemCreate
 
 def get_items(db: Session):
     return db.query(Item).all()

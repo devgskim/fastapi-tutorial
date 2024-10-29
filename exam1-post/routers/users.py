@@ -90,3 +90,14 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully"}
+
+
+
+
+@router.post("/login")
+def login(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(UserModel).filter(UserModel.username == user.username).first()
+    if not db_user or not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    
+    return {"message": "Login successful"}

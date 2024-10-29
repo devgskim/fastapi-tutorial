@@ -38,9 +38,15 @@ def read_post(post_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Post not found")  # 게시물 없을 시 404 오류
     return post
 
-@router.post("/", response_model=Post)
+@router.post("/", response_model=Post, summary="create post", description="create post")
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
-    # logging.info(f"Creating post with title: {post.title}")
+    """
+    Create an Post with all the information:
+
+    - **title**: title
+    - **content**: content
+    - **author**: author
+    """
     try:
         db_post = PostModel(title=post.title, content=post.content, author=post.author)
         # db_post = PostModel(id=post.id, title=post.title, content=post.content, author=post.author)
